@@ -27,15 +27,19 @@ jobs:
     - name: Pack
       run: dotnet pack --no-build -c Release -o ./package
 
-    - name: Set package version
+    - name: Get csproj version
       run: PKG_VERSION=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' ./src/Calculator/Calculator.csproj); echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
 
-    - name: Set RC in package version
-      if: github.ref != 'refs/heads/master'
-      run: PKG_VERSION=$PKG_VERSION-rc$(date +"%Y%m%d.%H%M%S"); echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
+    - name: Set RC version of package if branch is not main
+      if: github.ref != 'refs/heads/main'
+      run: PKG_FINAL_VERSION=$PKG_VERSION-rc$(date +"%Y%m%d.%H%M%S"); echo "PKG_FINAL_VERSION=$PKG_FINAL_VERSION" >> $GITHUB_ENV
 
-    - name: Set file name to publish
-      run: PACKAGEPATH=$(ls package/*.nupkg | head -n 1); echo "PACKAGEPATH=$PACKAGEPATH" >> $GITHUB_ENV
+    - name: Set final version of package if branch is main
+      if: github.ref == 'refs/heads/main'
+      run: PKG_FINAL_VERSION=$PKG_VERSION; echo "PKG_FINAL_VERSION=$PKG_FINAL_VERSION" >> $GITHUB_ENV
+
+    - name: Rename file to final version
+      run: mv ./package/Calculator.$PKG_VERSION.nupkg ./package/Calculator.$PKG_FINAL_VERSION.nupkg
 
     - name: Publish
-      run: dotnet nuget push "./package/Calculator.$PKG_VERSION.nupkg" --api-key ${{ secrets.GITHUBPACKAGES }} --source https://nuget.pkg.github.com/fosouzadev/index.json
+      run: dotnet nuget push "./package/Calculator.$PKG_FINAL_VERSION.nupkg" --api-key ${{ secrets.GITHUBPACKAGES }} --source https://nuget.pkg.github.com/fosouzadev/index.json
