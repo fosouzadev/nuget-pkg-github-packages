@@ -8,11 +8,6 @@
     <Authors>Felipe Souza</Authors>
     <RepositoryUrl>https://github.com/fosouzadev/nuget-pkg-github-packages</RepositoryUrl>
     <PackageTags>fosouzadev;actions;packages;nuget</PackageTags>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
 
 </Project>
