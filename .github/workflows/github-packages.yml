@@ -3,7 +3,9 @@ name: Publish package to github packages
 on:
   push:
     branches:
-      - "**"
+      - main
+      - 'feature/**'
+      - 'hotfix/**'
 
 jobs:
   build-and-publish:
